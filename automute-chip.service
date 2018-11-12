@@ -1,0 +1,11 @@
+[Unit]
+Description=Mute/Unmute Amplifier
+
+[Service]
+Type=simple
+ExecStart=/root/automute-chip.sh
+
+[Install]
+WantedBy=multi-user.target
+
+# EOF

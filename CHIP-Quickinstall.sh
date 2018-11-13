@@ -103,6 +103,7 @@ if [[ "$IO" == [ORBorb] ]];then
 		echo SUDO | sudo -S cp AutoMute/automute-chip.service /etc/systemd/system/automute-chip.service
 		echo SUDO | sudo -S systemctl enable automute-chip
 		echo SUDO | sudo -S systemctl start automute-chip
+		echo SUDO | sudo -S chmod +x /root/automute-chip.sh
 	fi
 fi
 

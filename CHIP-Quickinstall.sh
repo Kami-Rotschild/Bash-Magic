@@ -34,8 +34,9 @@ if [[ "$INSTALL" == [yY] ]];then
 		read -p "Please insert new Computername:" CNAME
 	fi
 	read -p "Lock ROOT access locally? (y/n)" -n 1 ROOTING
+	echo " "
 	read -p "Rename Standar-User to $USERNAME? (y/n)" -n 1 RENAME
-
+	echo " "
 	if [[ "$RENAME" == [yY] ]];then
 		echo $SUDO | sudo -S pkill -u 1000
 		echo $SUDO | sudo -S usermod -l $USERNAME chip

@@ -11,10 +11,8 @@ echo " "
 if [[ "$(echo $SUDO | sudo -S whoami)" != root ]]; then
 	echo "Please enter correct password for 'root'!"
 	exit
-elif [[ "$(whoami)" == root ]]; then
-	echo "Please do NOT use 'su' / 'sudo -i' command or root-access!"
-	exit
 fi
+
 echo " "
 read -p "Start Pre-Setup routine? (y/n)" -n 1 INSTALL
 echo " "
@@ -30,51 +28,54 @@ echo " "
 if [[ "$INSTALL" == [yY] ]];then
 	if [[ "$1" != "" ]];then
 		USERNAME=$1
-		PASSWORD=$2
-		CNAME=$3
+		CNAME=$2
 	else
-		read -p "Please insert Username:" USERNAME
-		read -p -s -r "Please insert Password:" PASSWORD
+		read -p "Please insert new Username:" USERNAME
 		read -p "Please insert new Computername:" CNAME
 	fi
 	read -p "Lock ROOT access locally?" -n 1 ROOTING
-	
-	echo $SUDO | sudo -S pkill -u 1000
-	echo $SUDO | sudo -S usermod -l $USERNAME chip
-	if [ $? != 0 ]; then
-		echo "Failed to rename user!"
-		exit
-	fi
+	read -p "Rename $USER to $USERNAME?" -n 1 RENAME
 
-	echo SUDO | sudo -S usermod -d /home/$USERNAME -m $USERNAME
-	echo "Password for $USERNAME"
-	echo SUDO | sudo -S passwd $USERNAME
+	if [[ "$RENAME" == [yY] ]];then
+		echo $SUDO | sudo -S pkill -u 1000
+		echo $SUDO | sudo -S usermod -l $USERNAME chip
+		if [ $? != 0 ]; then
+			echo "Failed to rename user!"
+			exit
+		fi
+		echo " "
+		echo SUDO | sudo -S usermod -d /home/$USERNAME -m $USERNAME
+		echo "Password for $USERNAME"
+		echo SUDO | sudo -S passwd $USERNAME
+	fi
+	
 	echo "Password for root"
 	echo SUDO | sudo -S passwd root
 	
 	if [[ "$ROOTING" == [yY] ]];then
 		echo SUDO | sudo -S passwd -l root
 	fi
-	
+	echo " "
+	echo "Disabling bluetooth"
 	echo SUDO | sudo -S systemctl stop bluetooth
 	echo SUDO | sudo -S systemctl disable bluetooth
 
+	echo "Disabling unnecessary log writing"
 	echo SUDO | sudo -S ed -i '/daemon.\*;mail.\*;\\/,$d' /etc/rsyslog.conf
-
 	echo SUDO | sudo -S service rsyslog restart
-	
 	echo SUDO | sudo -S loginctl enable-linger $USERNAME
 
-
+	echo "Changing to /var to tmpfs"
 	echo SUDO | sudo -S echo "tmpfs    /tmp    tmpfs    defaults,noatime,nosuid,size=100m    0 0" >> /etc/fstab
 	echo SUDO | sudo -S echo "tmpfs    /var/tmp    tmpfs    defaults,noatime,nosuid,size=30m    0 0" >> /etc/fstab
 	echo SUDO | sudo -S echo "tmpfs    /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0" >> /etc/fstab
 	echo SUDO | sudo -S echo "tmpfs    /var/spool/mqueue    tmpfs    defaults,noatime,nosuid,mode=0700,gid=12,size=30m    0 0" >> /etc/fstab
 
+	echo "Changing network accessability"
 	echo SUDO | sudo -S echo $CNAME > /etc/hostname
 	echo SUDO | sudo -S sed -i "s/chip/$CNAME/" /etc/hosts
 	echo SUDO | sudo -S sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
-
+	echo "Updating obsolete NTC apt-database to JFpossibilities"
 	echo SUDO | sudo -S sed -i 's/opensource.nextthing.co/chip.jfpossibilities.com/' /etc/apt/sources.list
 
 	echo SUDO | sudo -S apt update -y

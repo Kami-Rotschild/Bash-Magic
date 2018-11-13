@@ -34,7 +34,7 @@ if [[ "$INSTALL" == [yY] ]];then
 		CNAME=$3
 	else
 		read -p "Please insert Username:" USERNAME
-		read -p "Please insert Password:" PASSWORD
+		read -p -s -r "Please insert Password:" PASSWORD
 		read -p "Please insert new Computername:" CNAME
 	fi
 	read -p "Lock ROOT access locally?" -n 1 ROOTING

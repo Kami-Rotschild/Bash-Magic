@@ -33,8 +33,8 @@ if [[ "$INSTALL" == [yY] ]];then
 		read -p "Please insert new Username:" USERNAME
 		read -p "Please insert new Computername:" CNAME
 	fi
-	read -p "Lock ROOT access locally?" -n 1 ROOTING
-	read -p "Rename $USER to $USERNAME?" -n 1 RENAME
+	read -p "Lock ROOT access locally? (y/n)" -n 1 ROOTING
+	read -p "Rename Standar-User to $USERNAME? (y/n)" -n 1 RENAME
 
 	if [[ "$RENAME" == [yY] ]];then
 		echo $SUDO | sudo -S pkill -u 1000

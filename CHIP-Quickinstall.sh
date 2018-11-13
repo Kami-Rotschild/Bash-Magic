@@ -35,7 +35,7 @@ if [[ "$INSTALL" == [yY] ]];then
 	fi
 	read -p "Lock ROOT access locally? (y/n)" -n 1 ROOTING
 	echo " "
-	read -p "Rename Standar-User to $USERNAME? (y/n)" -n 1 RENAME
+	read -p "Rename Standar-User to $USERNAME? Use another User or 'root' as actual login! (y/n)" -n 1 RENAME
 	echo " "
 	if [[ "$RENAME" == [yY] ]];then
 		echo $SUDO | sudo -S pkill -u 1000

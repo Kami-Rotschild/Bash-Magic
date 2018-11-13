@@ -107,10 +107,12 @@ if [[ "$IO" == [ORBorb] ]];then
 fi
 
 if [[ "$DEVRULES" == [yY] ]];then
-	echo SUDO | sudo -S GPIO-Dev-Rules/setup_gpio.sh $USERNAME
+	cd GPIO-Dev-Rules
+	echo SUDO | sudo -S ./setup_gpio.sh $USERNAME
+	cd ..
 fi
 
-echo SUDO | sudo -S apt autoremove -y
+echo SUDO | sudo -S apt-get autoremove -y
 
 if [[ "$RESTART" == [yY] ]];then
 	reboot now
